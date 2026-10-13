@@ -1,6 +1,9 @@
 *.o
 *.obj
+*.elf
+*.bin
 *.ppm
+*.log
 build/
 bin/
 out/
