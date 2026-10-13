@@ -1,0 +1,22 @@
+#pragma once
+#include <cstdint>
+#include <string>
+
+struct SDL_Window;
+struct SDL_Renderer;
+struct SDL_Texture;
+
+class Platform{
+    SDL_Window* window{nullptr};
+    SDL_Renderer* renderer{nullptr};
+    SDL_Texture* texture{nullptr};
+
+    public:
+        Platform(const char* title, int windowWidth, int windowHeight, int logicWidth, int logicHeight);
+        ~Platform();
+
+        //void update(const uint8_t* video);
+        //bool processInput(bool* keyboard);
+};
+
+void save_ppm(const char* filename, const uint32_t* pixels, uint32_t ScreenWidth, uint32_t ScreenHeight);

@@ -1,0 +1,12 @@
+*.o
+*.obj
+*.ppm
+build/
+bin/
+out/
+tests/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+.vscode/
+*.vscode
