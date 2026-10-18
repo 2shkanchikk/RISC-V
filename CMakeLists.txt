@@ -20,5 +20,7 @@ add_executable(riscv
     src/platform/platform.cpp
 )
 
+find_package(SDL2 REQUIRED)
+target_link_libraries(riscv PRIVATE SDL2::SDL2)
 target_include_directories(riscv PRIVATE src)
 target_compile_options(riscv PRIVATE -Wall -Wextra)

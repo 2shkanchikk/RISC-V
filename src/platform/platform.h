@@ -15,8 +15,8 @@ class Platform{
         Platform(const char* title, int windowWidth, int windowHeight, int logicWidth, int logicHeight);
         ~Platform();
 
-        //void update(const uint8_t* video);
-        //bool processInput(bool* keyboard);
+        void update(const uint32_t* video);
+        bool processInput(bool* keyboard);
 };
 
 void save_ppm(const char* filename, const uint32_t* pixels, uint32_t ScreenWidth, uint32_t ScreenHeight);

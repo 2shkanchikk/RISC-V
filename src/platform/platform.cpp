@@ -1,6 +1,7 @@
 #include "platform.h"
 #include <cstdio>
 #include <SDL2/SDL.h>
+#include <iostream>
 
 void save_ppm(const char* filename, const uint32_t* pixels, uint32_t ScreenWidth, uint32_t ScreenHeight){
     FILE* f = fopen(filename, "wb");
@@ -21,7 +22,28 @@ void save_ppm(const char* filename, const uint32_t* pixels, uint32_t ScreenWidth
 }
 
 Platform::Platform(const char* title, int windowWidth, int windowHeight, int logicWidth, int logicHeight){
+    if (SDL_Init(SDL_INIT_VIDEO) != 0){
+        std::cerr << "SDL_Init Error: " << SDL_GetError() << "\n";
+        return;
+    }
+    window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
+    if (!window) {
+        std::cerr << "Window Error: " << SDL_GetError() << "\n";
+        return;
+    }
 
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    if (!renderer) {
+        std::cerr << "Renderer Error: " << SDL_GetError() << "\n";
+        return;
+    }
+    SDL_RenderSetLogicalSize(renderer, logicWidth, logicHeight);
+
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, logicWidth, logicHeight);
+    if (!texture) {
+        std::cerr << "Texture Error: " << SDL_GetError() << "\n";
+        return;
+    }
 }
 
 Platform::~Platform(){
@@ -29,4 +51,23 @@ Platform::~Platform(){
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void Platform::update(const uint32_t* video){
+    uint32_t pixels[64*32]{};
+    for (int i = 0; i < 2048; ++i){
+        pixels[i] = (video[i] == 1) ? 0xFFFFFFFF : 0x000000FF;
+    }
+
+    SDL_UpdateTexture(texture, nullptr, pixels, 320 * 4);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+    SDL_RenderPresent(renderer);
+}
+
+bool Platform::processInput(bool* keyboard){
+    SDL_Event event{};
+    while (SDL_PollEvent(&event)){
+        if (event.type == SDL_QUIT) return false;
+    }
 }
