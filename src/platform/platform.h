@@ -5,6 +5,7 @@
 struct SDL_Window;
 struct SDL_Renderer;
 struct SDL_Texture;
+class Keyboard;
 
 class Platform{
     SDL_Window* window{nullptr};
@@ -16,7 +17,7 @@ class Platform{
         ~Platform();
 
         void update(const uint32_t* video);
-        bool processInput(bool* keyboard);
+        bool processInput(Keyboard& kb);
 };
 
 void save_ppm(const char* filename, const uint32_t* pixels, uint32_t ScreenWidth, uint32_t ScreenHeight);

@@ -7,12 +7,12 @@ uint8_t Bus::read8(uint32_t addr){
         return ram.read8(addr - kRAM_Base);
     }
 
-    if ((addr >= kUART_Base) && (addr < (kUART_Base + kUART_Size))){
-        return uart.read8(addr - kUART_Base);
-    }
-
     if ((addr >= kDisplay_Base) && (addr < (kDisplay_Base + kDisplay_Size))){
         return display.read8(addr - kDisplay_Base);
+    }
+
+    if ((addr >= kUART_Base) && (addr < (kUART_Base + kUART_Size))){
+        return uart.read8(addr - kUART_Base);
     }
 
     printf("Bus: read8 from unknown address %08X\n", addr);
@@ -37,12 +37,16 @@ uint32_t Bus::read32(uint32_t addr){
         return ram.read32(addr - kRAM_Base);
     }
 
-    if ((addr >= kTimer_Base) && (addr < (kTimer_Base + kTimer_Size))){
-        return timer.read32(addr - kTimer_Base);
-    }
-
     if ((addr >= kDisplay_Base) && (addr < (kDisplay_Base + kDisplay_Size))){
         return display.read32(addr - kDisplay_Base);
+    }
+
+    if ((addr >= kKeyboard_Base) && (addr < (kKeyboard_Base + kKeyboard_Size))){
+        return keyboard.read32(addr - kKeyboard_Base);
+    }
+
+    if ((addr >= kTimer_Base) && (addr < (kTimer_Base + kTimer_Size))){
+        return timer.read32(addr - kTimer_Base);
     }
 
     printf("Bus: read32 from unknown address %08X\n", addr);
@@ -55,13 +59,13 @@ void Bus::write8(uint32_t addr, uint8_t value){
         return;
     }
 
-    if ((addr >= kUART_Base) && (addr < (kUART_Base + kUART_Size))){
-        uart.write8(addr - kUART_Base, value);
+    if ((addr >= kDisplay_Base) && (addr < (kDisplay_Base + kDisplay_Size))){
+        display.write8(addr - kDisplay_Base, value);
         return;
     }
 
-    if ((addr >= kDisplay_Base) && (addr < (kDisplay_Base + kDisplay_Size))){
-        display.write8(addr - kDisplay_Base, value);
+    if ((addr >= kUART_Base) && (addr < (kUART_Base + kUART_Size))){
+        uart.write8(addr - kUART_Base, value);
         return;
     }
 
@@ -98,4 +102,8 @@ void Bus::write32(uint32_t addr, uint32_t value){
 
 Display& Bus::getDisplay(){
     return display;
+}
+
+Keyboard& Bus::getKeyboard(){
+    return keyboard;
 }

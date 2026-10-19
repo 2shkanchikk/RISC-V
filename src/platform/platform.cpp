@@ -1,4 +1,5 @@
 #include "platform.h"
+#include "../devices/keyboard.h"
 #include <cstdio>
 #include <SDL2/SDL.h>
 #include <iostream>
@@ -65,9 +66,18 @@ void Platform::update(const uint32_t* video){
     SDL_RenderPresent(renderer);
 }
 
-bool Platform::processInput(bool* keyboard){
+bool Platform::processInput(Keyboard& kb){
     SDL_Event event{};
     while (SDL_PollEvent(&event)){
         if (event.type == SDL_QUIT) return false;
+
+        if ((event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) && event.key.repeat == 0) {
+            SDL_Scancode code = event.key.keysym.scancode;
+            if (code > 0 && code < 256) {
+                kb.push(event.type == SDL_KEYDOWN, uint8_t(code));
+            }
+        }
     }
+
+    return true;
 }
