@@ -6,11 +6,11 @@
 
 void save_ppm(const char* filename, const uint32_t* pixels, uint32_t ScreenWidth, uint32_t ScreenHeight){
     FILE* f = fopen(filename, "wb");
-    fprintf(f, "P6\n%u %u\n255\n", ScreenWidth, ScreenHeight);
     if (!f) {
         printf("Cannot create %s\n", filename);
         return;
     }
+    fprintf(f, "P6\n%u %u\n255\n", ScreenWidth, ScreenHeight);
 
     for (uint32_t i = 0; i < ScreenWidth * ScreenHeight; i++) {
         uint32_t p = pixels[i];
@@ -23,6 +23,8 @@ void save_ppm(const char* filename, const uint32_t* pixels, uint32_t ScreenWidth
 }
 
 Platform::Platform(const char* title, int windowWidth, int windowHeight, int logicWidth, int logicHeight){
+    this->logicWidth = logicWidth;
+
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
         std::cerr << "SDL_Init Error: " << SDL_GetError() << "\n";
         return;
@@ -45,8 +47,6 @@ Platform::Platform(const char* title, int windowWidth, int windowHeight, int log
         std::cerr << "Texture Error: " << SDL_GetError() << "\n";
         return;
     }
-
-    this->logicWidth = logicWidth;
 }
 
 Platform::~Platform(){
@@ -57,7 +57,7 @@ Platform::~Platform(){
 }
 
 void Platform::update(const uint32_t* video){
-    SDL_UpdateTexture(texture, nullptr, pixels, logicWidth * 4);
+    SDL_UpdateTexture(texture, nullptr, video, logicWidth * 4);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, nullptr, nullptr);
     SDL_RenderPresent(renderer);
