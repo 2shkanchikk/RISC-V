@@ -17,6 +17,7 @@ add_executable(riscv
     src/devices/uart.cpp
     src/devices/display.cpp
     src/devices/timer.cpp
+    src/devices/keyboard.cpp
     src/platform/platform.cpp
 )
 
