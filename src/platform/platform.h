@@ -11,6 +11,7 @@ class Platform{
     SDL_Window* window{nullptr};
     SDL_Renderer* renderer{nullptr};
     SDL_Texture* texture{nullptr};
+    int logicWidth{};
 
     public:
         Platform(const char* title, int windowWidth, int windowHeight, int logicWidth, int logicHeight);

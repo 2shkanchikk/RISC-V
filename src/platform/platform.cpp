@@ -45,6 +45,8 @@ Platform::Platform(const char* title, int windowWidth, int windowHeight, int log
         std::cerr << "Texture Error: " << SDL_GetError() << "\n";
         return;
     }
+
+    this->logicWidth = logicWidth;
 }
 
 Platform::~Platform(){
@@ -55,12 +57,7 @@ Platform::~Platform(){
 }
 
 void Platform::update(const uint32_t* video){
-    uint32_t pixels[64*32]{};
-    for (int i = 0; i < 2048; ++i){
-        pixels[i] = (video[i] == 1) ? 0xFFFFFFFF : 0x000000FF;
-    }
-
-    SDL_UpdateTexture(texture, nullptr, pixels, 320 * 4);
+    SDL_UpdateTexture(texture, nullptr, pixels, logicWidth * 4);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, nullptr, nullptr);
     SDL_RenderPresent(renderer);
