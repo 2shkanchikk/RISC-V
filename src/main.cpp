@@ -27,15 +27,11 @@ int main(int argc, char** argv){
     }
 
     while (running){
+        running = platform.processInput(bus.getKeyboard());
         platform.update(bus.getDisplay().getVideo());
     }
 
     cpu.dump();
-
-    if (cpu.getReg(10) != 0){
-        printf("FAIL, test %u\n", cpu.getReg(3));
-        return 1;
-    }
     
     return 0;
 }
