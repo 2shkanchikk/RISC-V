@@ -1,5 +1,5 @@
 #include "hostfs.h"
-#include "bus.h"
+#include "../core/bus.h"
 #include <vector>
 
 HostFS::HostFS(Bus* bus){
