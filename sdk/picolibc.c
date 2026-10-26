@@ -21,3 +21,56 @@ __attribute__((noreturn)) void _exit(int code){
     while (1) {}
 }
 
+int open(const char* path, int flags, ...){
+    *HostFS_ARG0 = (unsigned int)path;
+    if(flags & O_APPEND){
+        *HostFS_ARG1 = 0x02;
+    } else{
+        if((flags & O_ACCMODE) == O_RDONLY){
+            *HostFS_ARG1 = 0x00;
+        } else if((flags & O_ACCMODE) == O_WRONLY){
+            *HostFS_ARG1 = 0x01;
+        } else if((flags & O_ACCMODE) == O_RDWR){
+            *HostFS_ARG1 = 0x03;
+        }
+    }
+    
+    *HostFS_CMD = 0x00;
+    int res = (int)*HostFS_RESULT;
+    if (res < 0) return -1;
+    return res + 3;
+}
+
+int close(int fd){
+    if (fd < 3) return -1;
+    *HostFS_ARG0 = fd - 3;
+    *HostFS_CMD  = 0x01;
+    return *HostFS_RESULT;
+}
+
+ssize_t read(int fd, void* buf, size_t count){
+    if (fd < 3) return -1;
+    *HostFS_ARG0 = fd - 3;
+    *HostFS_ARG1 = (unsigned int)buf;
+    *HostFS_ARG2 = count;
+    *HostFS_CMD  = 0x10;
+    return *HostFS_RESULT;
+}
+
+off_t lseek(int fd, off_t offset, int whence){
+    if (fd < 3) return -1;
+    *HostFS_ARG0 = fd - 3;
+    *HostFS_ARG1 = offset;
+    *HostFS_ARG2 = whence;
+    *HostFS_CMD  = 0x11;
+    return (int)*HostFS_RESULT;
+}
+
+ssize_t write(int fd, const void* buf, size_t count){
+    if (fd < 3) return -1;
+    *HostFS_ARG0 = fd - 3;
+    *HostFS_ARG1 = (unsigned int)buf;
+    *HostFS_ARG2 = count;
+    *HostFS_CMD  = 0x20;
+    return *HostFS_RESULT;
+}
