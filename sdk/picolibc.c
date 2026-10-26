@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <sys/stat.h>
 #include "address.h"
 
 static int uart_putc(char c, FILE* file){
@@ -73,4 +75,22 @@ ssize_t write(int fd, const void* buf, size_t count){
     *HostFS_ARG2 = count;
     *HostFS_CMD  = 0x20;
     return *HostFS_RESULT;
+}
+
+int rename(const char* oldpath, const char* newpath){
+    (void)oldpath; (void)newpath;
+    errno = ENOSYS;
+    return -1;
+}
+
+int mkdir(const char* path, mode_t mode){
+    (void)path; (void)mode;
+    errno = ENOSYS;
+    return -1;
+}
+
+int unlink(const char* path){
+    (void)path;
+    errno = ENOSYS;
+    return -1;
 }

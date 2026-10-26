@@ -6,6 +6,7 @@
 *.log
 *.wad
 build/
+build-doom/
 bin/
 out/
 tests/
