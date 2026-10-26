@@ -1,0 +1,6 @@
+#define UART ((volatile unsigned char*)0x10000000)
+#define HostFS_CMD ((volatile unsigned int*)0x50000000)
+#define HostFS_ARG0 ((volatile unsigned int*)0x50000004)
+#define HostFS_ARG1 ((volatile unsigned int*)0x50000008)
+#define HostFS_ARG2 ((volatile unsigned int*)0x5000000C)
+#define HostFS_RESULT ((volatile unsigned int*)0x50000010)
