@@ -1,4 +1,7 @@
 #define UART ((volatile unsigned char*)0x10000000)
+#define SCREEN ((volatile unsigned int*)0x20000000)
+#define TIMER ((volatile unsigned int*)0x30000000)
+#define KEYBOARD ((volatile unsigned int*)0x40000000)
 #define HostFS_CMD ((volatile unsigned int*)0x50000000)
 #define HostFS_ARG0 ((volatile unsigned int*)0x50000004)
 #define HostFS_ARG1 ((volatile unsigned int*)0x50000008)
