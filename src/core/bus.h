@@ -4,6 +4,7 @@
 #include "../devices/display.h"
 #include "../devices/timer.h"
 #include "../devices/keyboard.h"
+#include "../devices/hostfs.h"
 #include <cstdint>
 
 class Bus{
@@ -15,11 +16,14 @@ class Bus{
     static constexpr uint32_t kKeyboard_Base = 0x40000000;
     static constexpr uint32_t kKeyboard_Size = 0x10000000;
     static constexpr uint32_t kTimer_Size = 0x4;
+    static constexpr uint32_t kHostFS_Base = 0x50000000;
+    static constexpr uint32_t kHostFS_Size = 0x100;
     RAM ram;
     UART uart;
     Display display;
     Timer timer;
     Keyboard keyboard;
+    HostFS hostfs{this};
 
     public:
         uint8_t read8(uint32_t addr);
@@ -32,4 +36,6 @@ class Bus{
 
         Display& getDisplay();
         Keyboard& getKeyboard();
+
+        bool isRAM(uint32_t addr, uint32_t len);
 };

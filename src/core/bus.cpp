@@ -45,6 +45,10 @@ uint32_t Bus::read32(uint32_t addr){
         return keyboard.read32(addr - kKeyboard_Base);
     }
 
+    if ((addr >= kHostFS_Base) && (addr < (kHostFS_Base + kHostFS_Size))){
+        return hostfs.read32(addr - kHostFS_Base);
+    }
+
     if ((addr >= kTimer_Base) && (addr < (kTimer_Base + kTimer_Size))){
         return timer.read32(addr - kTimer_Base);
     }
@@ -97,6 +101,11 @@ void Bus::write32(uint32_t addr, uint32_t value){
         return;
     }
 
+    if ((addr >= kHostFS_Base) && (addr < (kHostFS_Base + kHostFS_Size))){
+        hostfs.write32(addr - kHostFS_Base, value);
+        return;
+    }
+
     printf("Bus: write32 to unknown address %08X\n", addr);
 }
 
@@ -106,4 +115,9 @@ Display& Bus::getDisplay(){
 
 Keyboard& Bus::getKeyboard(){
     return keyboard;
+}
+
+bool Bus::isRAM(uint32_t addr, uint32_t len){
+    uint32_t off = addr - kRAM_Base;
+    return off < kRAM_Size && len <= kRAM_Size - off;
 }

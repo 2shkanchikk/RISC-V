@@ -18,6 +18,7 @@ add_executable(riscv
     src/devices/display.cpp
     src/devices/timer.cpp
     src/devices/keyboard.cpp
+    src/devices/hostfs.cpp
     src/platform/platform.cpp
 )
 
