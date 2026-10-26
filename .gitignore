@@ -4,6 +4,7 @@
 *.bin
 *.ppm
 *.log
+*.wad
 build/
 bin/
 out/
