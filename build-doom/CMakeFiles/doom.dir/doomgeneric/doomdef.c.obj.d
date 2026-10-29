@@ -1,0 +1,31 @@
+CMakeFiles/doom.dir/doomgeneric/doomdef.c.obj: \
+ /home/ubuntulover229/cpp-proj/RISC-V/doom/doomgeneric/doomgeneric/doomdef.c \
+ /home/ubuntulover229/cpp-proj/RISC-V/doom/doomgeneric/doomgeneric/doomdef.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/stdio.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/cdefs.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/config.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/machine/ieeefp.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/features.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/picolibc.h \
+ /usr/lib/gcc/riscv64-unknown-elf/14.2.0/include/float.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/machine/_default_types.h \
+ /usr/lib/gcc/riscv64-unknown-elf/14.2.0/include/stddef.h \
+ /usr/lib/gcc/riscv64-unknown-elf/14.2.0/include/stdarg.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/lock.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/_types.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/machine/_types.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/string.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/_locale.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/strings.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/string.h \
+ /home/ubuntulover229/cpp-proj/RISC-V/doom/doomgeneric/doomgeneric/doomtype.h \
+ /usr/lib/gcc/riscv64-unknown-elf/14.2.0/include/stdbool.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/inttypes.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/stdint.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/_intsup.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/_stdint.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/limits.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/syslimits.h \
+ /usr/lib/gcc/riscv64-unknown-elf/14.2.0/include/limits.h \
+ /home/ubuntulover229/cpp-proj/RISC-V/doom/doomgeneric/doomgeneric/i_timer.h \
+ /home/ubuntulover229/cpp-proj/RISC-V/doom/doomgeneric/doomgeneric/d_mode.h

@@ -1,0 +1,25 @@
+CMakeFiles/doom.dir/doomgeneric/memio.c.obj: \
+ /home/ubuntulover229/cpp-proj/RISC-V/doom/doomgeneric/doomgeneric/memio.c \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/stdio.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/cdefs.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/config.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/machine/ieeefp.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/features.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/picolibc.h \
+ /usr/lib/gcc/riscv64-unknown-elf/14.2.0/include/float.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/machine/_default_types.h \
+ /usr/lib/gcc/riscv64-unknown-elf/14.2.0/include/stddef.h \
+ /usr/lib/gcc/riscv64-unknown-elf/14.2.0/include/stdarg.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/lock.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/_types.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/machine/_types.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/stdlib.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/machine/stdlib.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/alloca.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/_wait.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/string.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/_locale.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/strings.h \
+ /usr/lib/picolibc/riscv64-unknown-elf/include/sys/string.h \
+ /home/ubuntulover229/cpp-proj/RISC-V/doom/doomgeneric/doomgeneric/memio.h \
+ /home/ubuntulover229/cpp-proj/RISC-V/doom/doomgeneric/doomgeneric/z_zone.h
