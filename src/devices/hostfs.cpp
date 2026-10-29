@@ -1,6 +1,7 @@
 #include "hostfs.h"
 #include "../core/bus.h"
 #include <vector>
+#include <filesystem>
 
 HostFS::HostFS(Bus* bus){
     this->bus = bus;
@@ -29,21 +30,27 @@ int HostFS::find_free_slot(){
     return -1;
 }
 
+bool HostFS::readPath(uint32_t addr, std::string& out){
+    std::string s;
+    uint8_t b;
+    while((b = bus->read8(addr)) != 0){
+        s.push_back(static_cast<char>(b));
+        ++addr;
+        if (s.size() > 255){return false;}
+    }
+
+    if ((s.empty() || s[0] == '/' || s.find("..") != std::string::npos)){return false;}
+
+    out = path + s;
+    return true;
+}
+
 void HostFS::execute(uint32_t opcode){
     switch(opcode){
         case 0x00:{ //open
             std::string s;
-            uint8_t b;
-            uint32_t cur = arg0;
-            while((b = bus->read8(cur)) != 0){
-                s.push_back(static_cast<char>(b));
-                ++cur;
-                if (s.size() > 255){break;}
-            }
+            if (!readPath(arg0, s)) { result = 0xFFFFFFFF; break; }
 
-            if ((s.empty() || s.find("..") != std::string::npos) || s[0] == '/' || s.size() > 255){result = 0xFFFFFFFF; break;}
-
-            s = path + s;
             const char* mode{nullptr};
 
             switch(arg1){
@@ -124,6 +131,36 @@ void HostFS::execute(uint32_t opcode){
 
             size_t count = fwrite(buf.data(), 1, buf.size(), files[arg0]);
             result = count;
+            break;
+        }
+
+        case 0x30:{ //mkdir
+            std::string p;
+            if (!readPath(arg0, p)) {result = 0xFFFFFFFF; break;}
+
+            std::error_code ec;
+            std::filesystem::create_directory(p, ec);
+            result = ec ? 0xFFFFFFFF : 0;
+            break;
+        }
+
+        case 0x31:{ //unlink
+            std::string p;
+            if (!readPath(arg0, p)) {result = 0xFFFFFFFF; break;}
+
+            if (std::remove(p.c_str()) != 0) {result = 0xFFFFFFFF; break;}
+            result = 0;
+            break;
+        }
+
+        case 0x32:{ //rename
+            std::string p1;
+            if (!readPath(arg0, p1)) {result = 0xFFFFFFFF; break;}
+            std::string p2;
+            if (!readPath(arg1, p2)) {result = 0xFFFFFFFF; break;}
+
+            if(std::rename(p1.c_str(), p2.c_str()) != 0) {result = 0xFFFFFFFF; break;}
+            result = 0;
             break;
         }
 
