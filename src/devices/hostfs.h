@@ -13,6 +13,7 @@ class HostFS{
     FILE* files[kMaxFiles]{nullptr};
     std::string path{"files/"};
     int find_free_slot();
+    bool readPath(uint32_t addr, std::string& out);
 
     public:
         HostFS(Bus*);

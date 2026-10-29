@@ -77,20 +77,22 @@ ssize_t write(int fd, const void* buf, size_t count){
     return *HostFS_RESULT;
 }
 
-int rename(const char* oldpath, const char* newpath){
-    (void)oldpath; (void)newpath;
-    errno = ENOSYS;
-    return -1;
-}
-
 int mkdir(const char* path, mode_t mode){
-    (void)path; (void)mode;
-    errno = ENOSYS;
-    return -1;
+    (void)mode;
+    *HostFS_ARG0 = (unsigned int)path;
+    *HostFS_CMD  = 0x30;
+    return (int)*HostFS_RESULT;
 }
 
 int unlink(const char* path){
-    (void)path;
-    errno = ENOSYS;
-    return -1;
+    *HostFS_ARG0 = (unsigned int)path;
+    *HostFS_CMD  = 0x31;
+    return (int)*HostFS_RESULT;
+}
+
+int rename(const char* oldpath, const char* newpath){
+    *HostFS_ARG0 = (unsigned int)oldpath;
+    *HostFS_ARG1 = (unsigned int)newpath;
+    *HostFS_CMD  = 0x32;
+    return (int)*HostFS_RESULT;
 }
