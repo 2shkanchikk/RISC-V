@@ -1,3 +1,0 @@
-/home/ubuntulover229/cpp-proj/RISC-V/build-doom/CMakeFiles/doom.dir
-/home/ubuntulover229/cpp-proj/RISC-V/build-doom/CMakeFiles/edit_cache.dir
-/home/ubuntulover229/cpp-proj/RISC-V/build-doom/CMakeFiles/rebuild_cache.dir
