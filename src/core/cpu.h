@@ -8,7 +8,7 @@ class CPU{
     uint32_t PC{0x80000000};
     Bus* bus;
     bool stopped{false};
-    uint32_t csr[4096]{0};
+    uint32_t CSR[4096]{0};
 
     void execOp(uint32_t instruction);
     void execMul(uint32_t instruction); // M extension
@@ -22,7 +22,7 @@ class CPU{
     void execAUIPC(uint32_t instruction);
     void execEnv(uint32_t instruction);
 
-    void trap(uint32_t cause);
+    void trap(uint32_t cause, uint32_t tval);
 
     public:
         CPU(Bus* bus);
