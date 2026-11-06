@@ -4,6 +4,18 @@ CPU::CPU(Bus* bus){
     this->bus = bus;
 }
 
+void CPU::trap(uint32_t cause, uint32_t tval){
+    if (CSR[0x305] == 0) {
+        printf("Unhandled trap: cause %u, tval %08X at PC %08X\n", cause, tval, PC - 4);
+        stopped = true;
+        return;
+    }
+    CSR[0x341] = PC - 4;
+    CSR[0x342] = cause;
+    CSR[0x343] = tval;
+    PC = CSR[0x305] >> 2 << 2;
+}
+
 static uint32_t rd(uint32_t instruction){
     return (instruction >> 7 & 0x1F);
 }
@@ -80,29 +92,45 @@ void CPU::execOp(uint32_t instruction){
                 }
 
                 default: {
-                    //error()
+                    trap(2, instruction);
                 }
             }
             break;
         }
 
         case(0x1):{
-            x[rd] = x[rs1] << (x[rs2] & 0x1F);
+            if(funct7 == 0x00){
+                x[rd] = x[rs1] << (x[rs2] & 0x1F);
+            } else {
+                trap(2, instruction);
+            }
             break;
         }
 
         case(0x2):{
-            x[rd] = (int32_t(x[rs1]) < int32_t(x[rs2])) ? 1 : 0;
+            if(funct7 == 0x00){
+                x[rd] = (int32_t(x[rs1]) < int32_t(x[rs2])) ? 1 : 0;
+            } else {
+                trap(2, instruction);
+            }
             break;
         }
 
         case(0x3):{
-            x[rd] = (x[rs1] < x[rs2]) ? 1 : 0;
+            if(funct7 == 0x00){
+                x[rd] = (x[rs1] < x[rs2]) ? 1 : 0;
+            } else {
+                trap(2, instruction);
+            }
             break;
         }
 
         case(0x4):{
-            x[rd] = x[rs1] ^ x[rs2];
+            if(funct7 == 0x00){
+                x[rd] = x[rs1] ^ x[rs2];
+            } else {
+                trap(2, instruction);
+            }
             break;
         }
 
@@ -119,19 +147,27 @@ void CPU::execOp(uint32_t instruction){
                 }
 
                 default: {
-                    //error()
+                    trap(2, instruction);
                 }
             }
             break;
         }
 
         case(0x6):{
-            x[rd] = x[rs1] | x[rs2];
+            if(funct7 == 0x00){
+                x[rd] = x[rs1] | x[rs2];
+            } else {
+                trap(2, instruction);
+            }
             break;
         }
 
         case(0x7):{
-            x[rd] = x[rs1] & x[rs2];
+            if(funct7 == 0x00){
+                x[rd] = x[rs1] & x[rs2];
+            } else {
+                trap(2, instruction);
+            }
             break;
         }
     }
@@ -226,7 +262,7 @@ void CPU::execOpImm(uint32_t instruction){
             if (::funct7(instruction) == 0x00){
                 x[rd] = x[rs1] << ::rs2(instruction);
             } else {
-                //error()
+                trap(2, instruction);
             }
             break;
         }
@@ -259,7 +295,7 @@ void CPU::execOpImm(uint32_t instruction){
                 }
 
                 default:{
-                    //ОШИБКА
+                    trap(2, instruction);
                 }
             }
             break;
@@ -310,7 +346,7 @@ void CPU::execLoad(uint32_t instruction){
         }
 
         default:{
-            //error()
+            trap(2, instruction);
         }
     }
 }
@@ -338,7 +374,7 @@ void CPU::execStore(uint32_t instruction){
         }
 
         default:{
-            //error()
+            trap(2, instruction);
         }
     }
 }
@@ -399,7 +435,7 @@ void CPU::execBranch(uint32_t instruction){
         }
 
         default:{
-            //error()
+            trap(2, instruction);
         }
     }
 }
@@ -423,7 +459,7 @@ void CPU::execJALR(uint32_t instruction){
         x[rd] = PC;
         PC = target;
     } else {
-        //error()
+        trap(2, instruction);
     }
 }
 
@@ -442,7 +478,64 @@ void CPU::execAUIPC(uint32_t instruction){
 }
 
 void CPU::execEnv(uint32_t instruction){
-    stopped = true;
+    uint32_t funct3 = ::funct3(instruction);
+    uint32_t imm = instruction >> 20;
+
+    if (funct3 == 0){
+        switch(imm){
+            case(0x000):{
+                trap(11, 0);
+                break;
+            }
+
+            case(0x001):{
+                stopped = true;
+                break;
+            }
+
+            case(0x302):{
+                PC = CSR[0x341];
+                break;
+            }
+
+            case(0x105):{
+                break;
+            }
+
+            default:{
+                trap(2, instruction);
+            }
+        }
+    } else {
+        uint32_t rs1 = ::rs1(instruction);
+        uint32_t rd = ::rd(instruction);
+        uint32_t src = (funct3 & 0x4) ? rs1 : x[rs1];
+        uint32_t buf = CSR[imm];
+
+
+        switch(funct3 & 0x3){
+            case(0x1):{
+                CSR[imm] = src;
+                break;
+            }
+
+            case(0x2):{
+                CSR[imm] = CSR[imm] | src;
+                break;
+            }
+
+            case(0x3):{
+                CSR[imm] = CSR[imm] & ~src;
+                break; 
+            }
+
+            default:{
+                trap(2, instruction);
+                return;
+            }
+        }
+        x[rd] = buf;
+    }
 }
 
 void CPU::cycle(){
@@ -452,18 +545,18 @@ void CPU::cycle(){
     PC += 4;
 
     switch(opcode){
-        case (0b0110011): execOp(instruction); break;
-        case (0b0010011): execOpImm(instruction); break;
-        case (0b0000011): execLoad(instruction); break;
-        case (0b0100011): execStore(instruction); break;
-        case (0b1100011): execBranch(instruction); break;
-        case (0b1101111): execJAL(instruction); break;
-        case (0b1100111): execJALR(instruction); break;
-        case (0b0110111): execLUI(instruction); break;
-        case (0b0010111): execAUIPC(instruction); break;
-        case (0b1110011): execEnv(instruction); break;
+        case (0b0110011): execOp(instruction); break;      //
+        case (0b0010011): execOpImm(instruction); break;   //
+        case (0b0000011): execLoad(instruction); break;    //
+        case (0b0100011): execStore(instruction); break;   //
+        case (0b1100011): execBranch(instruction); break;  //
+        case (0b1101111): execJAL(instruction); break;     //
+        case (0b1100111): execJALR(instruction); break;    //
+        case (0b0110111): execLUI(instruction); break;     //
+        case (0b0010111): execAUIPC(instruction); break;   //
+        case (0b1110011): execEnv(instruction); break;     //opcode 0x73
         case (0b0001111): break;
-        default: ;//error()
+        default: trap(2, instruction);
     }
 
     x[0] = 0;
