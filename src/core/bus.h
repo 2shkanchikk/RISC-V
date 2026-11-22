@@ -6,6 +6,7 @@
 #include "../devices/keyboard.h"
 #include "../devices/hostfs.h"
 #include <cstdint>
+#include <functional>
 
 class Bus{
     static constexpr uint32_t kRAM_Base = 0x80000000;
@@ -15,7 +16,6 @@ class Bus{
     static constexpr uint32_t kTimer_Base = 0x30000000;
     static constexpr uint32_t kKeyboard_Base = 0x40000000;
     static constexpr uint32_t kKeyboard_Size = 0x10000000;
-    static constexpr uint32_t kTimer_Size = 0x4;
     static constexpr uint32_t kHostFS_Base = 0x50000000;
     static constexpr uint32_t kHostFS_Size = 0x100;
     RAM ram;
@@ -34,8 +34,12 @@ class Bus{
         void write16(uint32_t addr, uint16_t value);
         void write32(uint32_t addr, uint32_t value);
 
+        void update();
+
         Display& getDisplay();
         Keyboard& getKeyboard();
 
         bool isRAM(uint32_t addr, uint32_t len);
+
+        void setIRQCallback(std::function<void(bool)> callback);
 };

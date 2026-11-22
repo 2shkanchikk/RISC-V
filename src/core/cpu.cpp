@@ -2,6 +2,33 @@
 
 CPU::CPU(Bus* bus){
     this->bus = bus;
+    bus->setIRQCallback([this](bool enabled){this->setIRQ(enabled);});
+}
+
+void CPU::trap(uint32_t cause, uint32_t tval){
+    if (CSR[MTVEC] == 0) {
+        printf("Unhandled trap: cause 0x%08X, tval 0x%08X at PC 0x%08X\n", cause, tval, PC - 4);
+        stopped = true;
+        return;
+    }
+    printf("caused trap: cause 0x%08X, tval %08X at PC %08X\n", cause, tval, PC - 4); //test
+    uint32_t buf = (CSR[MSTATUS] >> 3) & 1u;
+
+    CSR[MSTATUS] &= ~((1u << 3) | (1u << 7));
+    CSR[MSTATUS] |= buf << 7;
+
+    CSR[MEPC] = PC - 4;
+    CSR[MCAUSE] = cause;
+    CSR[MTVAL] = tval;
+    //PC = CSR[MTVEC] >> 2 << 2;
+}
+
+void CPU::setIRQ(bool enabled){
+    if (enabled)  {
+        CSR[MIP]  |= (1 << 7);
+    } else {
+        CSR[MIP] &= ~(1 << 7);
+    }
 }
 
 void CPU::trap(uint32_t cause, uint32_t tval){
@@ -494,7 +521,13 @@ void CPU::execEnv(uint32_t instruction){
             }
 
             case(0x302):{
-                PC = CSR[0x341];
+                uint32_t buf = (CSR[MSTATUS] >> 7) & 1u;
+
+                CSR[MSTATUS] &= ~(1u << 3);
+                CSR[MSTATUS] |= buf << 3;
+                CSR[MSTATUS] |= 1u << 7;
+
+                PC = CSR[MEPC];
                 break;
             }
 
@@ -507,6 +540,10 @@ void CPU::execEnv(uint32_t instruction){
             }
         }
     } else {
+        if (!hasCSR(imm)) {
+            trap(2, instruction);
+            return;
+        }
         uint32_t rs1 = ::rs1(instruction);
         uint32_t rd = ::rd(instruction);
         uint32_t src = (funct3 & 0x4) ? rs1 : x[rs1];
@@ -539,6 +576,11 @@ void CPU::execEnv(uint32_t instruction){
 }
 
 void CPU::cycle(){
+    if ((((CSR[MIP] >> 7) & 1) == 1) && (((CSR[MIE] >> 7) & 1) == 1) && (((CSR[MSTATUS] >> 3) & 1) == 1)){
+        trap(0x80000007, 0);
+        return;
+    }
+
     uint32_t instruction = bus->read32(PC);
     uint32_t opcode = instruction & 0x7F;
 
@@ -554,7 +596,7 @@ void CPU::cycle(){
         case (0b1100111): execJALR(instruction); break;    //
         case (0b0110111): execLUI(instruction); break;     //
         case (0b0010111): execAUIPC(instruction); break;   //
-        case (0b1110011): execEnv(instruction); break;     //opcode 0x73
+        case (0b1110011): execEnv(instruction); break;     //
         case (0b0001111): break;
         default: trap(2, instruction);
     }
@@ -571,4 +613,21 @@ void CPU::dump() const {
 
 uint32_t CPU::getReg(int number){
     return x[number];
+}
+
+bool CPU::hasCSR(uint32_t addr) const{
+    switch(addr){
+        case MSTATUS:
+        case MIE:
+        case MTVEC:
+        case MSCRATCH:
+        case MEPC:
+        case MCAUSE:
+        case MTVAL:
+        case MIP:
+            return true;
+
+        default:
+            return false;
+    }
 }

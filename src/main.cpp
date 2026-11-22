@@ -10,23 +10,31 @@ int main(int argc, char** argv){
     Platform platform("RISC-V", 960, 600, kScreenWidth, kScreenHeight);
     uint64_t steps = 0;
     const uint64_t kMaxSteps = 10000000000ULL;
+    bool stepsEnabled = false;
 
-    if (!loadBinary(bus, argv[1], 0x80000000)) return 1;
+    if (argc < 2){return 1;}
 
-    save_ppm("frame.ppm", bus.getDisplay().getVideo(), kScreenWidth, kScreenHeight);
+    if (!loadBinary(bus, argv[1], 0x80000000)) {return 1;}
+
+    //save_ppm("frame.ppm", bus.getDisplay().getVideo(), kScreenWidth, kScreenHeight);
 
     bool running = true;
+    
+    while(!cpu.isStopped() && running){
+        uint64_t batch = 100000;
+        if(stepsEnabled && (kMaxSteps - steps < batch)){
+            batch = kMaxSteps - steps;
+        }
 
-    while (!cpu.isStopped() && running) {
-    for (int i = 0; i < 100000 && !cpu.isStopped(); ++i) {
-        cpu.cycle();
-    }
+        for (uint64_t i = 0; i < batch && !cpu.isStopped(); ++i){
+            cpu.cycle();
+            ++steps;
 
-    running = platform.processInput(bus.getKeyboard());
-    platform.update(bus.getDisplay().getVideo());
-    }
+            if((i & 0xFF) == 0){
+                bus.update();
+            }
+        }
 
-    while (running){
         running = platform.processInput(bus.getKeyboard());
         platform.update(bus.getDisplay().getVideo());
     }

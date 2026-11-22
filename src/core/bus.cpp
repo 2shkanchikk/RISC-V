@@ -7,6 +7,10 @@ uint8_t Bus::read8(uint32_t addr){
         return ram.read8(addr - kRAM_Base);
     }
 
+    if ((addr >= kTimer_Base) && (addr < (kTimer_Base + kTimer_Size))){
+        return timer.read8(addr - kTimer_Base);
+    }
+
     if ((addr >= kDisplay_Base) && (addr < (kDisplay_Base + kDisplay_Size))){
         return display.read8(addr - kDisplay_Base);
     }
@@ -37,6 +41,10 @@ uint32_t Bus::read32(uint32_t addr){
         return ram.read32(addr - kRAM_Base);
     }
 
+    if ((addr >= kTimer_Base) && (addr < (kTimer_Base + kTimer_Size))){
+        return timer.read32(addr - kTimer_Base);
+    }
+
     if ((addr >= kDisplay_Base) && (addr < (kDisplay_Base + kDisplay_Size))){
         return display.read32(addr - kDisplay_Base);
     }
@@ -47,10 +55,6 @@ uint32_t Bus::read32(uint32_t addr){
 
     if ((addr >= kHostFS_Base) && (addr < (kHostFS_Base + kHostFS_Size))){
         return hostfs.read32(addr - kHostFS_Base);
-    }
-
-    if ((addr >= kTimer_Base) && (addr < (kTimer_Base + kTimer_Size))){
-        return timer.read32(addr - kTimer_Base);
     }
 
     printf("Bus: read32 from unknown address %08X\n", addr);
@@ -96,6 +100,11 @@ void Bus::write32(uint32_t addr, uint32_t value){
         return;
     }
 
+    if ((addr >= kTimer_Base) && (addr < (kTimer_Base + kTimer_Size))){
+        timer.write32(addr - kTimer_Base, value);
+        return;
+    }
+
     if ((addr >= kDisplay_Base) && (addr < (kDisplay_Base + kDisplay_Size))){
         display.write32(addr - kDisplay_Base, value);
         return;
@@ -109,6 +118,10 @@ void Bus::write32(uint32_t addr, uint32_t value){
     printf("Bus: write32 to unknown address %08X\n", addr);
 }
 
+void Bus::update(){
+    timer.update();
+}
+
 Display& Bus::getDisplay(){
     return display;
 }
@@ -120,4 +133,8 @@ Keyboard& Bus::getKeyboard(){
 bool Bus::isRAM(uint32_t addr, uint32_t len){
     uint32_t off = addr - kRAM_Base;
     return off < kRAM_Size && len <= kRAM_Size - off;
+}
+
+void Bus::setIRQCallback(std::function<void(bool)> callback){
+    timer.setIRQ = std::move(callback);
 }
