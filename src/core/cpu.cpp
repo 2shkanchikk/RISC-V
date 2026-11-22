@@ -31,18 +31,6 @@ void CPU::setIRQ(bool enabled){
     }
 }
 
-void CPU::trap(uint32_t cause, uint32_t tval){
-    if (CSR[0x305] == 0) {
-        printf("Unhandled trap: cause %u, tval %08X at PC %08X\n", cause, tval, PC - 4);
-        stopped = true;
-        return;
-    }
-    CSR[0x341] = PC - 4;
-    CSR[0x342] = cause;
-    CSR[0x343] = tval;
-    PC = CSR[0x305] >> 2 << 2;
-}
-
 static uint32_t rd(uint32_t instruction){
     return (instruction >> 7 & 0x1F);
 }
